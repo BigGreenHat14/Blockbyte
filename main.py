@@ -185,9 +185,11 @@ def menu(id):
         else:
             if input("Save? (Y/n) > ").lower() != "n":
                 save_data(id,users)
-                if os.path.exists("restart_blockbyte.sh"):
+                SCRIPT_DIR = os.path.dirname(sys.argv[0])
+                RESTART_SCRIPT = os.path.join(SCRIPT_DIR,'restart_blockbyte.sh')
+                if os.path.exists(RESTART_SCRIPT):
                     if input("Restart server? (Y/n) > ").lower() != "n":
-                        os.system("bash restart_blockbyte.sh")
+                        os.system(f"bash {RESTART_SCRIPT}")
             sys.exit(0)
 
 # Set project
