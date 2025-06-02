@@ -172,6 +172,7 @@ def menu(id):
             else:
                 break
     users = load_data(id)
+    print("Users:",", ".join(users.keys()))
     while True:
         if username := input("Enter Username (blank to exit) > "):
             if username in users.keys():
