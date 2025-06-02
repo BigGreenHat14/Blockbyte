@@ -13,6 +13,6 @@ My version of BlockBit for Scratch
 ***If you need to, [create a venv](https://www.w3schools.com/python/python_virtualenv.asp)***
 
 Bonus:
-Run `venv/bin/python3 main.py -m` to start the menu
+Run `python main.py -m` to start the menu (where python is your python executable)
 
 If this doesn't work create an issue and i might help
