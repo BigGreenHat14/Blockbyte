@@ -10,6 +10,7 @@ My version of BlockBit for Scratch
 3. `cd` into the extracted zip
 4. Run `(python) -m venv venv` (where python is your python executable)
 5. Run `venv/bin/python3 main.py` to start the server
-5.5. Run `venv/bin/python3 main.py -m` to start the menu
+Bonus:
+Run `venv/bin/python3 main.py -m` to start the menu
 
 If this doesn't work create an issue and i might help
