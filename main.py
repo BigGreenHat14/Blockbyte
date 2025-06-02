@@ -19,12 +19,12 @@ parser.add_argument("-m","--menu", action="store_true", help="Start CLI menu ins
 args = parser.parse_args()
 
 def save_data(project_id, users):
-    with open(f"blockbytedb_{project_id}", "wb") as f:
+    with open(f"blockbytedb_{project_id}.pkl", "wb") as f:
         pickle.dump((users), f)
 
 def load_data(project_id):
     if os.path.exists(f"blockbytedb_{project_id}"):
-        with open(f"blockbytedb_{project_id}", "rb") as f:
+        with open(f"blockbytedb_{project_id}.pkl", "rb") as f:
             return pickle.load(f)
     else:
         return ({})
