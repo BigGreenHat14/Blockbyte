@@ -9,8 +9,6 @@ import pickle
 import os
 import sys
 import scratchattach as sa
-import requests
-import math
 import argparse
 from dotenv import load_dotenv
 load_dotenv()
