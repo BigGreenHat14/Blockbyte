@@ -5,29 +5,37 @@
 #  |____/|_|\___/ \___|_|\_\____/ \__, |\__\___|     |___/\___|_|    \_/ \___|_|   
 #  <3 bgh                         |___/                                            
 
+#yes i did partially use chatgpt thank you for asking - every dev in 2025
+
 import pickle
 import os
 import sys
 import scratchattach as sa
+import requests
+import math
 import argparse
 from dotenv import load_dotenv
 load_dotenv()
 
 parser = argparse.ArgumentParser(description="Blockbyte Server")
-parser.add_argument("-p","--project", type=int, help="Project ID")
+parser.add_argument("-p","--projectid", type=int,help="Project ID")
 parser.add_argument("-m","--menu", action="store_true", help="Start CLI menu instead of server")
 args = parser.parse_args()
 
+# Utility functions for persistent data storage
 def save_data(project_id, users):
-    with open(f"blockbytedb_{project_id}.pkl", "wb") as f:
+    with open(f"blockbytedb_{project_id}", "wb") as f:
         pickle.dump((users), f)
 
 def load_data(project_id):
     if os.path.exists(f"blockbytedb_{project_id}"):
-        with open(f"blockbytedb_{project_id}.pkl", "rb") as f:
+        with open(f"blockbytedb_{project_id}", "rb") as f:
             return pickle.load(f)
     else:
         return ({})
+
+def lowercase_keys(d):
+    return {str(k).lower(): v for k, v in d.items()}
 
 # User class
 class User:
@@ -35,7 +43,10 @@ class User:
         self.theme = "56.7"
         self.balance = 100
         self.notifications = ["Welcome to blockbyte!"]
-        self.history = [] # Format (Incoming, Username, Amount, Product)
+        self.history = [] # Format (Incoming,User,Amount,Product)
+
+def fix_name(name:str):
+    return name.lstrip("@").lower()
 
 # Project initialization
 def init_project(project_id):
@@ -44,16 +55,16 @@ def init_project(project_id):
 
     users = load_data(project_id)
     def account_verify(requester):
-        if requester not in users.keys():
-            users[requester] = User()
+        if requester.lower() not in users.keys():
+            users[requester.lower()] = User()
     @client.request
     def info():
-        username = client.get_requester()
+        username = fix_name(client.get_requester())
         account_verify(username)
         try:
             toreturn = []
             user = users[username]
-            toreturn.append(username)
+            toreturn.append(client.get_requester())
             toreturn.append(user.balance)
             toreturn.append(user.theme)
             toreturn += list(reversed(user.notifications))
@@ -64,18 +75,19 @@ def init_project(project_id):
 
     @client.request
     def dismiss():
-        account_verify(client.get_requester())
-        users[client.get_requester()].notifications = []
+        account_verify(fix_name(client.get_requester()))
+        users[fix_name(client.get_requester())].notifications = []
         save_data(project_id, users)
         return "k"
 
     @client.request
     def transfer(othername, amount, product):
-        username = client.get_requester()
+        username = fix_name(client.get_requester())
+        othername = fix_name(othername)
         if othername not in users.keys():
             try:
                 if not othername.startswith("test"):
-                    sa.get_user(othername)
+                    sa.get_user(othername).name
             except sa.exceptions.UserNotFound:
                 return "x"
             account_verify(othername)
@@ -91,9 +103,9 @@ def init_project(project_id):
             user.history.append((False,othername,amount,product))
             user2.history.append((True,username,amount,product))
             if product != "":
-                user2.notifications.append(f"{username} bought {product} for {amount} Blockbyte{'s' if amount != 1 else ''}")
+                user2.notifications.append(f"{client.get_requester()} bought {product} for {amount} Blockbyte{'s' if amount != 1 else ''}")
             else:
-                user2.notifications.append(f"{username} sent you {amount} BlockByte{'s' if amount != 1 else ''}")
+                user2.notifications.append(f"{client.get_requester()} sent you {amount} BlockByte{'s' if amount != 1 else ''}")
             save_data(project_id, users)
             return "k"
         except Exception as e:
@@ -102,9 +114,9 @@ def init_project(project_id):
 
     @client.request
     def set_theme(num):
-        account_verify(client.get_requester())
+        account_verify(fix_name(client.get_requester()))
         try:
-            users[client.get_requester()].theme = num
+            users[fix_name(client.get_requester())].theme = num
             save_data(project_id, users)
         except:None
         return "k"
@@ -115,7 +127,9 @@ def init_project(project_id):
     # Start the client
     client.start(thread=False)
 
-def menu(id):
+def debug_menu(id):
+    import __main__
+    __main__.User = User
     def info(name):
         user = users[name]
         fullybreak = False
@@ -124,7 +138,7 @@ def menu(id):
             print(f"{name}'s Blockbyte Profile:")
             print(f" - Balance: {user.balance}")
             print(f" - Theme (hue value): {user.theme}")
-            print(f" - Notifications:")
+            print(f" - Notifications")
             for notification in reversed(user.notifications):
                 print(f"    > {notification}")
             print(f" - Transactions")
@@ -174,7 +188,7 @@ def menu(id):
     users = load_data(id)
     print("Users:",", ".join(users.keys()))
     while True:
-        if username := input("Enter Username (blank to exit) > "):
+        if username := fix_name(input("Enter Username (blank to exit) > ")):
             if username in users.keys():
                 info(username)
             else:
@@ -184,22 +198,14 @@ def menu(id):
         else:
             if input("Save? (Y/n) > ").lower() != "n":
                 save_data(id,users)
-                SCRIPT_DIR = os.path.dirname(sys.argv[0])
-                if os.name != 'nt':
-                    RESTART_SCRIPT = os.path.join(SCRIPT_DIR,'restart_blockbyte.sh')
-                    if os.path.exists(RESTART_SCRIPT):
-                        if input("Restart server? (Y/n) > ").lower() != "n":
-                            os.system(f"bash {RESTART_SCRIPT}")
-                else:
-                    RESTART_SCRIPT = os.path.join(SCRIPT_DIR,'restart_blockbyte.bat')
-                    if os.path.exists(RESTART_SCRIPT):
-                        if input("Restart server? (Y/n) > ").lower() != "n":
-                            os.system(RESTART_SCRIPT)
+                if os.path.exists("restart_blockbyte.sh"):
+                    if input("Restart server? (Y/n) > ").lower() != "n":
+                        os.system("bash restart_blockbyte.sh")
             sys.exit(0)
 
 # Set project
 if __name__ == "__main__":
     if args.menu:
-        menu(args.projectid)
+        debug_menu(args.projectid)
     else:
         init_project(args.projectid)
