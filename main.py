@@ -44,6 +44,8 @@ class User:
         self.balance = 100
         self.notifications = ["Welcome to blockbyte!"]
         self.history = [] # Format (Incoming,User,Amount,Product)
+        self.products = []
+        self.random_info = {}
 
 def fix_name(name:str):
     return name.lstrip("@").lower()
@@ -96,7 +98,7 @@ def init_project(project_id):
             amount = round(float(amount))
             user = users[username]
             user2 = users[othername]
-            if amount > user.balance or amount < 1:
+            if (amount > user.balance or amount < 1) or (product not in user2.products and not product == ""):
                 return "x"
             user.balance -= amount
             user2.balance += amount
@@ -120,7 +122,20 @@ def init_project(project_id):
             save_data(project_id, users)
         except:None
         return "k"
-    # Leaderboard feature
+    @client.request
+    def add_product(name):
+        username = fix_name(client.get_requester())
+        account_verify(username)
+        if not name in users[username].products:
+            users[username].products.append(name)
+        return "k"
+    @client.request
+    def discontinue(name):
+        username = fix_name(client.get_requester())
+        account_verify(username)
+        if name in users[username].products:
+            del users[username].products[users[username].products.index(name)]
+        return "k"
     @client.event
     def on_ready():
         print(f"Server for project {project_id} is running :D")
@@ -141,6 +156,9 @@ def debug_menu(id):
             print(f" - Notifications")
             for notification in reversed(user.notifications):
                 print(f"    > {notification}")
+            print(f" - Products")
+            for product in user.products:
+                print(f"    > {product}")
             print(f" - Transactions")
             for transaction in reversed(user.history):
                 if transaction[0]:
