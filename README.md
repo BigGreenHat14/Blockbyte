@@ -9,7 +9,7 @@ My version of BlockBit for Scratch
 2. Extract the zip file
 3. `cd` into the extracted zip
 4. Configure the `.env` file for the account the server will use 
-5. Run `python main.py -p id` to start the server (where python is your python executable and id is the project id of your remix)
+5. Run `python main.py -p id` to start the server (where python is your python executable and id is the project id of your **shared** remix)
 6. Configure `restart_blockbyte.bat` (Windows) or `restart_blockbyte.sh` (Unix) files
 
 **If you need to, [create a venv](https://www.w3schools.com/python/python_virtualenv.asp)**
