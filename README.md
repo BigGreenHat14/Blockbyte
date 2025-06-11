@@ -7,7 +7,7 @@ My version of BlockBit for Scratch
 # Setup
 1. Download the repository at `https://github.com/BigGreenHat14/Blockbyte/archive/refs/heads/main.zip`
 2. Extract the zip file
-3. `cd` into the extracted zip
+3. `cd` into / open the extracted zip
 4. Configure the `.env` file for the account the server will use 
 5. Run `python main.py -p id` to start the server (where python is your python executable and id is the [project id](https://github.com/BigGreenHat14/Blockbyte/wiki/How-to-get-project-id) of your **shared** remix)
 6. Configure `restart_blockbyte.bat` (Windows) or `restart_blockbyte.sh` (Unix) files
