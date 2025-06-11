@@ -15,6 +15,6 @@ My version of BlockBit for Scratch
 **If you need to, [create a venv](https://www.w3schools.com/python/python_virtualenv.asp)**
 
 Bonus:
-Run `python main.py -m` to start the menu (where python is your python executable)
+Run `python main.py -p id -m` to start the menu (where python is your python executable and id is the [project id](https://github.com/BigGreenHat14/Blockbyte/wiki/How-to-get-project-id) of your **shared** remix)
 
 If this doesn't work create an issue and i might help
