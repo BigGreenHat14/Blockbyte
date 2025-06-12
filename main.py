@@ -87,8 +87,9 @@ def init_project(project_id):
 
     @client.request
     def dismiss():
-        user = users[fix_name(client.get_requester())]
-        account_verify(user)
+        name = fix_name(client.get_requester())
+        account_verify(name)
+        user = users[name]
         user.notifications = []
         save_data(project_id, users)
         return "k"
