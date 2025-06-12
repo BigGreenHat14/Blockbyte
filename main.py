@@ -37,7 +37,8 @@ def load_data(project_id):
 def lowercase_keys(d):
     return {str(k).lower(): v for k, v in d.items()}
 
-SETTING_NAMES = ("nf_comment",)
+SETTING_NAMES = ("nf_comment","nf_project")
+SETTING_DEFAULTS = {"nf_comment":False,"nf_project":True}
 # User class
 class User:
     def __init__(self,name):
@@ -49,10 +50,13 @@ class User:
         self.history = [] # Format (Incoming,User,Amount,Product)
         self.products = []
         self.settings = {}
+    def get_setting(self,setting):
+        return self.settings.get(setting,SETTING_DEFAULTS.get(setting,False))
     def notify(self,text):
         global session
-        self.notifications.append(text)
-        if self.settings.get("nf_comment",False):
+        if self.get_setting("nf_project"):
+            self.notifications.append(text)
+        if self.get_setting("nf_comment"):
             user = session.connect_user(self.safe_name)
             user.post_comment(f"[Blockbyte] {text}")
 
@@ -85,6 +89,7 @@ def init_project(project_id):
     def dismiss():
         user = users[fix_name(client.get_requester())]
         account_verify(user)
+        user.notifications = []
         save_data(project_id, users)
         return "k"
     
@@ -95,7 +100,7 @@ def init_project(project_id):
         user = users[name]
         settingsplus = []
         for setting in SETTING_NAMES:
-            settingsplus.append(str(int(user.settings.get(setting,False))))
+            settingsplus.append(str(int(user.get_setting(setting))))
         return settingsplus
     @client.request
     def set_settings(settings):
