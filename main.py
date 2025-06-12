@@ -37,7 +37,7 @@ def load_data(project_id):
 def lowercase_keys(d):
     return {str(k).lower(): v for k, v in d.items()}
 
-SETTINGS = ("nf_comment",)
+SETTING_NAMES = ("nf_comment",)
 # User class
 class User:
     def __init__(self,name):
@@ -94,7 +94,7 @@ def init_project(project_id):
         account_verify(name)
         user = users[name]
         settingsplus = []
-        for setting in SETTINGS:
+        for setting in SETTING_NAMES:
             settingsplus.append(str(int(user.settings.get(setting,False))))
         return settingsplus
     @client.request
@@ -104,7 +104,7 @@ def init_project(project_id):
         account_verify(name)
         user = users[name]
         try:
-            for name,setting in zip(SETTINGS,settings):
+            for name,setting in zip(SETTING_NAMES,settings):
                 user.settings[name] = bool(int(setting))
             save_data(project_id, users)
             return "k"
