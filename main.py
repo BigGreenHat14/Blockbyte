@@ -5,7 +5,7 @@
 #  |____/|_|\___/ \___|_|\_\____/ \__, |\__\___|     |___/\___|_|    \_/ \___|_|   
 #  <3 bgh                         |___/                                            
 
-#yes i did partially use chatgpt thank you for asking - every dev in 2025
+# yes i did partially use chatgpt thank you for asking - every dev in 2025
 
 import pickle
 import os
@@ -37,28 +37,34 @@ def load_data(project_id):
 def lowercase_keys(d):
     return {str(k).lower(): v for k, v in d.items()}
 
+SETTINGS = ("nf_comment",)
 # User class
 class User:
-    def __init__(self):
+    def __init__(self,name):
+        self.name = name
+        self.safe_name = fix_name(name)
         self.theme = "56.7"
         self.balance = 100
         self.notifications = ["Welcome to blockbyte!"]
         self.history = [] # Format (Incoming,User,Amount,Product)
         self.products = []
-        self.random_info = {}
+        self.settings = {}
+    def notify(self,text):
+        global session
+        self.notifications.append(text)
+        if self.settings.get("nf_comment",False):
+            user = session.connect_user(self.safe_name)
+            user.post_comment(f"[Blockbyte] {text}")
 
 def fix_name(name:str):
     return name.lstrip("@").lower()
 
 # Project initialization
 def init_project(project_id):
-    cloud = sa.login(os.getenv("USERNAME"),os.getenv("PASSWORD")).connect_scratch_cloud(project_id)
-    client = cloud.requests()
-
     users = load_data(project_id)
     def account_verify(requester):
         if requester.lower() not in users.keys():
-            users[requester.lower()] = User()
+            users[requester.lower()] = User(requester)
     @client.request
     def info():
         username = fix_name(client.get_requester())
@@ -77,11 +83,32 @@ def init_project(project_id):
 
     @client.request
     def dismiss():
-        account_verify(fix_name(client.get_requester()))
-        users[fix_name(client.get_requester())].notifications = []
+        user = users[fix_name(client.get_requester())]
+        account_verify(user)
         save_data(project_id, users)
         return "k"
-
+    
+    @client.request
+    def get_settings():
+        name = fix_name(client.get_requester())
+        account_verify(name)
+        user = users[name]
+        settingsplus = []
+        for setting in SETTINGS:
+            settingsplus.append(str(int(user.settings.get(setting,False))))
+        return settingsplus
+    @client.request
+    def set_settings(*settings):
+        name = fix_name(client.get_requester())
+        account_verify(name)
+        user = users[name]
+        try:
+            for name,setting in zip(SETTINGS,settings):
+                user.settings[name] = bool(int(setting))
+            return "k"
+        except:
+            return "haxx0r not haxx0r"
+        save_data(project_id, users)
     @client.request
     def transfer(othername, amount, product):
         username = fix_name(client.get_requester())
@@ -105,13 +132,12 @@ def init_project(project_id):
             user.history.append((False,othername,amount,product))
             user2.history.append((True,username,amount,product))
             if product != "":
-                user2.notifications.append(f"{client.get_requester()} bought {product} for {amount} Blockbyte{'s' if amount != 1 else ''}")
+                user2.notify(f"{client.get_requester()} bought {product} for {amount} Blockbyte{'s' if amount != 1 else ''}")
             else:
-                user2.notifications.append(f"{client.get_requester()} sent you {amount} BlockByte{'s' if amount != 1 else ''}")
+                user2.notify(f"{client.get_requester()} sent you {amount} BlockByte{'s' if amount != 1 else ''}")
             save_data(project_id, users)
             return "k"
         except Exception as e:
-            user.notifications.append(str(type(e)) + " " + str(e))
             return "x"
 
     @client.request
@@ -188,7 +214,7 @@ def debug_menu(id):
                                 case "c":
                                     user.notifications = []
                                 case "a":
-                                    user.notifications.append(input("Contents > "))
+                                    user.notify(input("Contents > "))
                         case "t":
                             user.theme = input("Enter hue value > ")
                         case "e":
@@ -226,4 +252,7 @@ if __name__ == "__main__":
     if args.menu:
         debug_menu(args.projectid)
     else:
+        session = sa.login(os.getenv("USERNAME"),os.getenv("PASSWORD"))
+        cloud = session.connect_scratch_cloud(args.projectid)
+        client = cloud.requests()
         init_project(args.projectid)
