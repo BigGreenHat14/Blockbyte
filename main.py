@@ -5,7 +5,7 @@
 #  |____/|_|\___/ \___|_|\_\____/ \__, |\__\___|     |___/\___|_|    \_/ \___|_|   
 #  <3 bgh                         |___/                                            
 
-# yes i did partially use chatgpt thank you for asking - every dev in 2025
+#yes i did partially use chatgpt thank you for asking - every dev in 2025
 
 import pickle
 import os
@@ -98,17 +98,18 @@ def init_project(project_id):
             settingsplus.append(str(int(user.settings.get(setting,False))))
         return settingsplus
     @client.request
-    def set_settings(*settings):
+    def set_settings(settings):
+        settings = settings[1:]
         name = fix_name(client.get_requester())
         account_verify(name)
         user = users[name]
         try:
             for name,setting in zip(SETTINGS,settings):
                 user.settings[name] = bool(int(setting))
+            save_data(project_id, users)
             return "k"
         except:
             return "haxx0r not haxx0r"
-        save_data(project_id, users)
     @client.request
     def transfer(othername, amount, product):
         username = fix_name(client.get_requester())
