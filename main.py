@@ -79,6 +79,8 @@ def init_project(project_id):
             toreturn.append(client.get_requester())
             toreturn.append(user.balance)
             toreturn.append(user.theme)
+            for setting in SETTING_NAMES:
+                toreturn.append(str(int(user.get_setting(setting))))
             toreturn += list(reversed(user.notifications))
         except Exception as e:
             toreturn = ["Error : check notifications", "0", "Copy everything into the comments pls:",str(type(e)), str(e)]
@@ -93,28 +95,19 @@ def init_project(project_id):
         user.notifications = []
         save_data(project_id, users)
         return "k"
-    
+
     @client.request
-    def get_settings():
-        name = fix_name(client.get_requester())
-        account_verify(name)
-        user = users[name]
-        settingsplus = []
-        for setting in SETTING_NAMES:
-            settingsplus.append(str(int(user.get_setting(setting))))
-        return settingsplus
-    @client.request
-    def set_settings(settings):
-        settings = settings[1:]
+    def set_settings(settings:str):
+        settings = settings.replace(" ","")[0:]
         name = fix_name(client.get_requester())
         account_verify(name)
         user = users[name]
         try:
-            for name,setting in zip(SETTING_NAMES,settings):
-                user.settings[name] = bool(int(setting))
+            for name,value in zip(SETTING_NAMES,list(settings)):
+                user.settings[name] = bool(int(value))
             save_data(project_id, users)
             return "k"
-        except:
+        except Exception as e:
             return "haxx0r not haxx0r"
     @client.request
     def transfer(othername, amount, product):
@@ -192,6 +185,9 @@ def debug_menu(id):
             print(f" - Products")
             for product in user.products:
                 print(f"    > {product}")
+            print(f" - Settings")
+            for name in SETTING_NAMES:
+                print(f"    > {name}: {user.get_setting(name)}")
             print(f" - Transactions")
             for transaction in reversed(user.history):
                 if transaction[0]:
