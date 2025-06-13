@@ -58,8 +58,10 @@ class User:
             self.notifications.append(text)
         if self.get_setting("nf_comment"):
             user = session.connect_user(self.safe_name)
-            user.post_comment(f"[Blockbyte] {text}")
-
+            try:
+                user.post_comment(f"[Blockbyte] {text}")
+            except:
+                pass
 def fix_name(name:str):
     return name.lstrip("@").lower()
 
