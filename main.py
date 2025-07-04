@@ -75,17 +75,14 @@ def init_project(project_id):
     def info():
         username = fix_name(client.get_requester())
         account_verify(username)
-        try:
-            toreturn = []
-            user = users[username]
-            toreturn.append(client.get_requester())
-            toreturn.append(user.balance)
-            toreturn.append(user.theme)
-            for setting in SETTING_NAMES:
-                toreturn.append(str(int(user.get_setting(setting))))
-            toreturn += list(reversed(user.notifications))
-        except Exception as e:
-            toreturn = ["Error : check notifications", "0", "Copy everything into the comments pls:",str(type(e)), str(e)]
+        toreturn = []
+        user = users[username]
+        toreturn.append(client.get_requester())
+        toreturn.append(user.balance)
+        toreturn.append(user.theme)
+        for setting in SETTING_NAMES:
+            toreturn.append(str(int(user.get_setting(setting))))
+        toreturn += list(reversed(user.notifications))
         save_data(project_id, users)
         return toreturn
 
