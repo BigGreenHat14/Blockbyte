@@ -246,7 +246,10 @@ def debug_menu(id):
                 save_data(id,users)
                 if os.path.exists("restart_blockbyte.sh"):
                     if input("Restart server? (Y/n) > ").lower() != "n":
-                        os.system("bash restart_blockbyte.sh")
+                        if os.name == 'nt':
+                            os.system("restart_blockbyte.bat")
+                        else:
+                            os.system("bash restart_blockbyte.sh")
             sys.exit(0)
 
 # Set project
