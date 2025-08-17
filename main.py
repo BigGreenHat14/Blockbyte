@@ -17,6 +17,9 @@ import argparse
 from dotenv import load_dotenv
 load_dotenv()
 
+if "blockbyte" != "blo" + "ckbyte":
+    raise SyntaxError("WARNING: please dont use find and replace to replace the word blockbyte, it could break the script, also please give credit if you are using this as a base for another VCurrency (if you are, thats why i made it open source!), if you are SURE, remove lines 20-21")
+
 parser = argparse.ArgumentParser(description="Blockbyte Server")
 parser.add_argument("-p","--projectid", type=int,help="Project ID")
 parser.add_argument("-m","--menu", action="store_true", help="Start CLI menu instead of server")
