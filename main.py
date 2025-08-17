@@ -17,7 +17,7 @@ import argparse
 from dotenv import load_dotenv
 load_dotenv()
 
-if "blockbyte" != "blo" + "ckbyte":
+if "blockbyte" != "blockb" + "yte":
     raise SyntaxError("WARNING: please dont use find and replace to replace the word blockb" + "yte with blockbyte, it could break the script, also please give credit if you are using this as a base for another VCurrency (if you are, thats why i made it open source!), if you are SURE, remove lines 20-21")
 
 parser = argparse.ArgumentParser(description="Blockbyte Server")
