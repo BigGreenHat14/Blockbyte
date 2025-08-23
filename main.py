@@ -69,7 +69,10 @@ def fix_name(name:str):
 # Project initialization
 def init_project(project_id):
     def get_username(name):
-        return users[fix_name(name)].viewing
+        try:
+            return users[fix_name(name)].viewing
+        except KeyError:
+            return name
     users = load_data(project_id)
 #    for i in users.values():
 #        if "viewing" not in vars(i):
