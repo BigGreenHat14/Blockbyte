@@ -50,6 +50,7 @@ class User:
         self.history = [] # Format (Incoming,User,Amount,Product)
         self.products = []
         self.settings = {}
+        self.viewing = self.name
     def get_setting(self,setting):
         return self.settings.get(setting,SETTING_DEFAULTS.get(setting,False))
     def notify(self,text):
@@ -67,17 +68,22 @@ def fix_name(name:str):
 
 # Project initialization
 def init_project(project_id):
+    def get_username(name):
+        return users[fix_name(name)].viewing
     users = load_data(project_id)
+    for i in users.values():
+        if "viewing" not in vars(i):
+            i.viewing = i.name
     def account_verify(requester):
         if requester.lower() not in users.keys():
             users[requester.lower()] = User(requester)
     @client.request
     def info():
-        username = fix_name(client.get_requester())
+        username = fix_name(get_username(client.get_requester()))
         account_verify(username)
         toreturn = []
         user = users[username]
-        toreturn.append(client.get_requester())
+        toreturn.append(get_username(client.get_requester()))
         toreturn.append(user.balance)
         toreturn.append(user.theme)
         for setting in SETTING_NAMES:
@@ -88,7 +94,7 @@ def init_project(project_id):
 
     @client.request
     def dismiss():
-        name = fix_name(client.get_requester())
+        name = fix_name(get_username(client.get_requester()))
         account_verify(name)
         user = users[name]
         user.notifications = []
@@ -98,7 +104,7 @@ def init_project(project_id):
     @client.request
     def set_settings(settings:str):
         settings = settings.replace(" ","")[0:]
-        name = fix_name(client.get_requester())
+        name = fix_name(get_username(client.get_requester()))
         account_verify(name)
         user = users[name]
         try:
@@ -110,7 +116,7 @@ def init_project(project_id):
             return "haxx0r not haxx0r"
     @client.request
     def transfer(othername, amount, product):
-        username = fix_name(client.get_requester())
+        username = fix_name(get_username(client.get_requester()))
         othername = fix_name(othername)
         if othername not in users.keys():
             try:
@@ -131,9 +137,9 @@ def init_project(project_id):
             user.history.append((False,othername,amount,product))
             user2.history.append((True,username,amount,product))
             if product != "":
-                user2.notify(f"{client.get_requester()} bought {product} for {amount} Blockbyte{'s' if amount != 1 else ''}")
+                user2.notify(f"{get_username(client.get_requester())} bought {product} for {amount} Blockbyte{'s' if amount != 1 else ''}")
             else:
-                user2.notify(f"{client.get_requester()} sent you {amount} BlockByte{'s' if amount != 1 else ''}")
+                user2.notify(f"{get_username(client.get_requester())} sent you {amount} BlockByte{'s' if amount != 1 else ''}")
             save_data(project_id, users)
             return "k"
         except Exception as e:
@@ -141,22 +147,22 @@ def init_project(project_id):
 
     @client.request
     def set_theme(num):
-        account_verify(fix_name(client.get_requester()))
+        account_verify(fix_name(get_username(client.get_requester())))
         try:
-            users[fix_name(client.get_requester())].theme = num
+            users[fix_name(get_username(client.get_requester()))].theme = num
             save_data(project_id, users)
         except:None
         return "k"
     @client.request
     def add_product(name):
-        username = fix_name(client.get_requester())
+        username = fix_name(get_username(client.get_requester()))
         account_verify(username)
         if not name in users[username].products:
             users[username].products.append(name)
         return "k"
     @client.request
     def discontinue(name):
-        username = fix_name(client.get_requester())
+        username = fix_name(get_username(client.get_requester()))
         account_verify(username)
         if name in users[username].products:
             del users[username].products[users[username].products.index(name)]
@@ -207,6 +213,7 @@ def debug_menu(id):
                     print("(N)otifications")
                     print("(T)heme")
                     print("(D)elete")
+                    print("(V)iewing")
                     print("(E)xit user")
                     match input("? > ").lower():
                         case "b":
@@ -221,6 +228,8 @@ def debug_menu(id):
                             user.theme = input("Enter hue value > ")
                         case "e":
                             break
+                        case "v":
+                            user.viewing = input("Enter name > ")
                         case "d":
                             if input("Are you sure? (y/N) > ").lower() == "y":
                                 del users[name]
