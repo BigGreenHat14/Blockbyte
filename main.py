@@ -71,9 +71,9 @@ def init_project(project_id):
     def get_username(name):
         return users[fix_name(name)].viewing
     users = load_data(project_id)
-    for i in users.values():
-        if "viewing" not in vars(i):
-            i.viewing = i.name
+#    for i in users.values():
+#        if "viewing" not in vars(i):
+#            i.viewing = i.name
     def account_verify(requester):
         if requester.lower() not in users.keys():
             users[requester.lower()] = User(requester)
@@ -184,6 +184,7 @@ def debug_menu(id):
             print(f"{name}'s Blockbyte Profile:")
             print(f" - Balance: {user.balance}")
             print(f" - Theme (hue value): {user.theme}")
+            print(f" - Viewing as: {user.viewing}")
             print(f" - Notifications")
             for notification in reversed(user.notifications):
                 print(f"    > {notification}")
