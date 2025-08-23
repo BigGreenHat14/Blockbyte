@@ -256,7 +256,7 @@ def debug_menu(id):
                 info(username)
             else:
                 if input("No profile, Create one? (Y/n) > ").lower() != "n":
-                    users[username] = User()
+                    users[fix_name(username)] = User(username)
                     info(username)
         else:
             if input("Save? (Y/n) > ").lower() != "n":
