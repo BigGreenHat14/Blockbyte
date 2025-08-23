@@ -230,7 +230,11 @@ def debug_menu(id):
                         case "e":
                             break
                         case "v":
-                            user.viewing = input("Enter name > ")
+                            tmp = input("Enter name > ")
+                            if tmp:
+                                user.viewing = tmp
+                            else:
+                                user.viewing = user.name
                         case "d":
                             if input("Are you sure? (y/N) > ").lower() == "y":
                                 del users[name]
