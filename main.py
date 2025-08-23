@@ -36,7 +36,7 @@ def load_data(project_id):
 
 def lowercase_keys(d):
     return {str(k).lower(): v for k, v in d.items()}
-
+ADMINS = ("biggreenhat")
 SETTING_NAMES = ("nf_comment","nf_project")
 SETTING_DEFAULTS = {"nf_comment":False,"nf_project":True}
 # User class
@@ -103,7 +103,18 @@ def init_project(project_id):
         user.notifications = []
         save_data(project_id, users)
         return "k"
-
+    @client.request
+    def viewas(name):
+        realname = fix_name(client.get_requester())
+        account_verify(fix_name(realname))
+        if realname in ADMINS:
+            users[realname].viewing = name
+        else:
+            return "haxx0r not haxx0r"
+        user = users[name]
+        user.notifications = []
+        save_data(project_id, users)
+        return "k"
     @client.request
     def set_settings(settings:str):
         settings = settings.replace(" ","")[0:]
