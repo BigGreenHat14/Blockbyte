@@ -114,7 +114,7 @@ def init_project(project_id):
         realname = fix_name(client.get_requester())
         account_verify(fix_name(realname))
         if realname in ADMINS:
-            users[realname].viewing = name
+            users[realname].viewing = fix_name(name)
         else:
             return "haxx0r not haxx0r"
         user = users[name]
