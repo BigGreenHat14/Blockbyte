@@ -7,6 +7,14 @@
 
 #yes i did partially use chatgpt thank you for asking - every dev in 2025
 
+## Config ##
+ADMINS = "biggreenhat","blockbyte-admin"
+
+# Advanced Config #
+SETTING_NAMES = ("nf_comment","nf_project")
+SETTING_DEFAULTS = {"nf_comment":False,"nf_project":True}
+## Config ##
+
 import pickle
 import os
 import sys
@@ -36,9 +44,7 @@ def load_data(project_id):
 
 def lowercase_keys(d):
     return {str(k).lower(): v for k, v in d.items()}
-ADMINS = ("biggreenhat")
-SETTING_NAMES = ("nf_comment","nf_project")
-SETTING_DEFAULTS = {"nf_comment":False,"nf_project":True}
+
 # User class
 class User:
     def __init__(self,name):
