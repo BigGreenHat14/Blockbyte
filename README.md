@@ -22,6 +22,8 @@ If this doesn't work create an issue and i might help
 # Admins
 Admins can login to other people's accounts, they cannot however, change their balance excluding transfers.
 
+You can configure admins at the top of main.py
+
 To login to another person's account as an admin, press the "." key, then type "viewas&username" (without quotes) where username is the target users name (without @)
 
 To login to your own account again, login to another persons account, but use your username instead
