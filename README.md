@@ -18,3 +18,8 @@ Bonus:
 Run `python main.py -p id -m` to start the menu (where python is your python executable and id is the [project id](https://github.com/BigGreenHat14/Blockbyte/wiki/How-to-get-project-id) of your **shared** remix)
 
 If this doesn't work create an issue and i might help
+
+# Admins
+Admins can login to other peoples accounts, they cannot however, change their balance excluding transfers.
+
+To view another persons profile as an admin, press the "." key, then type "viewas&username" (without quotes) where username is the target users name (without @)
