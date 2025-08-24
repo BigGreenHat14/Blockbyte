@@ -117,8 +117,6 @@ def init_project(project_id):
             users[realname].viewing = fix_name(name)
         else:
             return "haxx0r not haxx0r"
-        user = users[name]
-        user.notifications = []
         save_data(project_id, users)
         return "k"
     @client.request
