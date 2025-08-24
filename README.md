@@ -20,6 +20,10 @@ Run `python main.py -p id -m` to start the menu (where python is your python exe
 If this doesn't work create an issue and i might help
 
 # Admins
-Admins can login to other peoples accounts, they cannot however, change their balance excluding transfers.
+Admins can login to other people's accounts, they cannot however, change their balance excluding transfers.
 
-To view another persons profile as an admin, press the "." key, then type "viewas&username" (without quotes) where username is the target users name (without @)
+To login to another person's account as an admin, press the "." key, then type "viewas&username" (without quotes) where username is the target users name (without @)
+
+To login to your own account again, login to another persons account, but use your username instead
+
+If you are not an admin, you will not be logged in to another account and will temporarially have the message "haxx0r not haxx0r" (without quotes) in your notifications until you reload
