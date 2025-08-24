@@ -251,7 +251,7 @@ def debug_menu(id):
                                 user.viewing = user.name
                         case "d":
                             if input("Are you sure? (y/N) > ").lower() == "y":
-                                del users[name]
+                                del users[user.name]
                                 fullybreak = True
                                 break
             if fullybreak:
