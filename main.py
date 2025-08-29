@@ -8,7 +8,7 @@
 #yes i did partially use chatgpt thank you for asking - every dev in 2025
 
 ## Config ##
-ADMINS = "biggreenhat","blockbyte-admin"
+ADMINS = "biggreenhat"
 
 # Advanced Config #
 SETTING_NAMES = ("nf_comment","nf_project")
@@ -80,9 +80,6 @@ def init_project(project_id):
         except KeyError:
             return name
     users = load_data(project_id)
-#    for i in users.values():
-#        if "viewing" not in vars(i):
-#            i.viewing = i.name
     def account_verify(requester):
         if requester.lower() not in users.keys():
             users[requester.lower()] = User(requester)
