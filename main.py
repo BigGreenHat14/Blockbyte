@@ -8,7 +8,7 @@
 #yes i did partially use chatgpt thank you for asking - every dev in 2025
 
 ## Config ##
-ADMINS = "biggreenhat"
+ADMINS = "biggreenhat",
 
 # Advanced Config #
 SETTING_NAMES = ("nf_comment","nf_project")
@@ -116,6 +116,15 @@ def init_project(project_id):
             return "haxx0r not haxx0r"
         save_data(project_id, users)
         return "k"
+    @client.request
+    def test_broadcast():
+        name = fix_name(get_username(client.get_requester()))
+        account_verify(name)
+        if name in ADMINS:
+            client.send([name,"This is a broadcast test!"])
+            return "k"
+        else:
+            return "haxx0r not haxx0r"
     @client.request
     def set_settings(settings:str):
         settings = settings.replace(" ","")[0:]
