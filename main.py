@@ -195,7 +195,7 @@ def init_project(project_id):
     def on_ready():
         print(f"Server for project {project_id} is running :D")
     # Start the client
-    client.start(thread=False)
+    client.start(thread=False,ignore_exceptions=False)
 
 def debug_menu(id):
     import __main__
