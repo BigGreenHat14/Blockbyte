@@ -282,7 +282,7 @@ def debug_menu(id):
         else:
             if input("Save? (Y/n) > ").lower() != "n":
                 save_data(id,users)
-                if os.path.exists("restart_blockbyte.sh"):
+                if os.path.exists("restart_blockbyte.sh") or os.path.exists("restart_blockbyte.bat"):
                     if input("Restart server? (Y/n) > ").lower() != "n":
                         if os.name == 'nt':
                             os.system("restart_blockbyte.bat")
